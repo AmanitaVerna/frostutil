@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-// Min returns the lowest of two integers.
-func Min(x, y int) int {
+// Min returns whichever of x or y is lowest.
+func Min[T uint | int | uint8 | uint16 | uint32 | uint64 | int8 | int16 | int32 | int64 | float32 | float64](x, y T) T {
 	if x < y {
 		return x
 	} else {
@@ -14,8 +14,8 @@ func Min(x, y int) int {
 	}
 }
 
-// Max returns the highest of two integers.
-func Max(x, y int) int {
+// Min returns whichever of x or y is highest.
+func Max[T uint | int | uint8 | uint16 | uint32 | uint64 | int8 | int16 | int32 | int64 | float32 | float64](x, y T) T {
 	if x > y {
 		return x
 	} else {
@@ -24,7 +24,7 @@ func Max(x, y int) int {
 }
 
 // Abs returns the absolute value of x.
-func Abs(x int) int {
+func Abs[T int | int8 | int16 | int32 | int64 | float32 | float64](x T) T {
 	if x < 0 {
 		return -x
 	} else {
@@ -32,8 +32,8 @@ func Abs(x int) int {
 	}
 }
 
-// Split splits a string by the separator sep, but does not split it where a separator is escaped.
-// It unescapes escaped separators (removes the \ before them) and endlines in the output.
+// Split splits a string by the separator sep, but does not split it where a separator is escaped (prefixed with a \).
+// It unescapes escaped separators (removes the \ before them) and turns "\\n"s into '\n's in the output (that is, it unescapes endlines).
 func Split(s string, sep rune) (out []string) {
 	out = make([]string, strings.Count(s, string(sep))+1)
 	amt := 0
@@ -96,17 +96,20 @@ func Split(s string, sep rune) (out []string) {
 	return
 }
 
-// Joins a set of strings, placing commas between them, escaping any separators (sep) and endlines in xs.
+// Joins a set of strings, placing separators (sep) between them, escaping any separators (sep) or endlines in xs (turning '\n's into "\\n"s).
+// The joined/modified string is returned, and the original slice of strings is unmodified.
 func Join(xs []string, sep rune) string {
 	sb := strings.Builder{}
 	for ix, x := range xs {
 		if ix > 0 {
+			// place separator before each x except the first.
 			sb.WriteRune(sep)
 		}
 		rx := []rune(x)
 		start := 0
 		for ir, r := range rx {
 			if r == '\n' {
+				// turn the \n into \\n
 				if ir > start {
 					sb.WriteString(string(rx[start:ir]))
 				}
@@ -114,6 +117,7 @@ func Join(xs []string, sep rune) string {
 				sb.WriteRune('n')
 				start = ir + 1
 			} else if r == sep {
+				// put a \ before the separator
 				if ir > start {
 					sb.WriteString(string(rx[start:ir]))
 				}
@@ -129,8 +133,8 @@ func Join(xs []string, sep rune) string {
 	return sb.String()
 }
 
-// UnescapeStr unescapes \\n and \, back into \n and ,
-func UnescapeStr(x string) string {
+// UnescapeStr unescapes "\\n" and "\<sep>" back into '\n' and '<sep>'.
+func UnescapeStr(x string, sep rune) string {
 	sb := strings.Builder{}
 	rx := []rune(x)
 	start := 0
@@ -145,7 +149,7 @@ func UnescapeStr(x string) string {
 			sb.WriteRune('\n')
 			start = ir + 1
 			bs = false
-		} else if r == ',' && bs {
+		} else if r == sep && bs {
 			if ir-1 > start {
 				sb.WriteString(string(rx[start : ir-1]))
 			}
@@ -161,8 +165,8 @@ func UnescapeStr(x string) string {
 	return sb.String()
 }
 
-// EscapeStr escapes \n and , into \\n and \,
-func EscapeStr(x string) string {
+// EscapeStr escapes '\n' and '<sep>' into "\\n" and "\<sep>".
+func EscapeStr(x string, sep rune) string {
 	sb := strings.Builder{}
 	rx := []rune(x)
 	start := 0
@@ -174,12 +178,12 @@ func EscapeStr(x string) string {
 			sb.WriteRune('\\')
 			sb.WriteRune('n')
 			start = ir + 1
-		} else if r == ',' {
+		} else if r == sep {
 			if ir > start {
 				sb.WriteString(string(rx[start:ir]))
 			}
 			sb.WriteRune('\\')
-			sb.WriteRune(',')
+			sb.WriteRune(sep)
 			start = ir + 1
 		}
 	}
@@ -205,7 +209,7 @@ func Xor(a, b bool) (c bool) {
 		c = false
 	} else if a || b {
 		c = true
-	} // the final condition is if both a and b are false, in which case we return false
+	} // there's a third possibility: when a and b are both false, in which case we return false
 	return
 }
 
@@ -233,13 +237,15 @@ func Compose[T any](f func(T) T, g func(T) T) func(T) T {
 // that takes a single argument and calls bar with that argument along with the arguments which you passed to foo, and returns whatever bar returns.
 // e.g.
 //
-//	func AddThree(x, y, z int) int { return x + y + z }
-//	func PartialAddThree(y, z int) func(int) int {
+//	 func AddThree(x, y, z int) int { return x + y + z }
+//	 func PartialAddThree(y, z int) func(int) int {
 //		return func(x int) int {
 //			return AddThree(x, y, z)
 //		}
-//	}
-//	Map(PartialAddThree(10, 100), []int {1, 2, 3, 4, 5})
+//	 }
+//	 Map(PartialAddThree(10, 100), []int {1, 2, 3, 4, 5})
+//
+// There's an example of partial application implemented as a generic function in Partial2to1, but it is probably harder to understand than the example above.
 func Map[T, S any](f func(T) S, xs []T) (ys []S) {
 	ys = make([]S, len(xs))
 	for i, x := range xs {

@@ -1,4 +1,6 @@
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+github.com/amanitaverna/frosttest v0.0.0-20221022030531-e8ee342c71b8 h1:ZYvR283+Dh5ZQkVxHkDoGylysrEP7eqBH7xUu5etB9c=
+github.com/amanitaverna/frosttest v0.0.0-20221022030531-e8ee342c71b8/go.mod h1:ZMrmEtlAlnHC75UBZQJplHXoRQgfBHSFvm3nRNweJTw=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

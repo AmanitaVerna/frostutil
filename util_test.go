@@ -40,11 +40,11 @@ func Test_Join(t *testing.T) {
 }
 
 func Test_EscapeStr(t *testing.T) {
-	assert.Equal(t, "foo\\,bar\\nnarf", EscapeStr("foo,bar\nnarf"))
+	assert.Equal(t, "foo\\,bar\\nnarf", EscapeStr("foo,bar\nnarf", ','))
 }
 
 func Test_UnescapeStr(t *testing.T) {
-	assert.Equal(t, "foo,bar\nnarf", UnescapeStr("foo\\,bar\\nnarf"))
+	assert.Equal(t, "foo,bar\nnarf", UnescapeStr("foo\\,bar\\nnarf", ','))
 }
 
 func Test_Xor(t *testing.T) {
