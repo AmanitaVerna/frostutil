@@ -6,7 +6,7 @@ In util.go:
 - Split function that splits a string by a separator rune, but not when that rune is prefixed by a backslash. It also unescapes escaped separators and endlines.
 - Join function that does the opposite of Split: It takes a slice of strings, and joins them with a specified separator, while escaping all already-existing instances of that separator and of endlines.
 - UnescapeStr and EscapeStr, which just do the separator and endline escaping/unescaping without the splitting/joining.
-- SearchStringsUnsorted, which searches an unsorted slice of strings to see if any of them are identical to a particular string, returning the index if it is found.
+- SearchStringsUnsorted, which searches an unsorted slice of strings to see if any of them are identical to a particular string, returning the index if it is found. This doesn't sort the slice and I don't recommend using it often, because it is nowhere near as efficient as using a proper search algorithm to search a sorted slice of strings.
 - Xor for two boolean values, because Go lacks a boolean xor operator.
 - DegreesToRadians and RadiansToDegrees convenience functions.
 - A Compose function which composes two functions which each take a single parameter and return value of the same type. That is, it takes (f (T) T) and (g (T) T) and returns a function which takes a parameter x of type T, which when called will call f(g(x)) and return whatever it returns.
