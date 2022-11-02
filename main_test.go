@@ -3,9 +3,9 @@ package frostutil_test
 import (
 	"testing"
 
-	"github.com/amanitaverna/frosttest"
+	"github.com/amanitaverna/frostutil"
 )
 
 func TestMain(m *testing.M) {
-	frosttest.OnTestMain(m)
+	frostutil.OnTestMain(m)
 }

@@ -3,8 +3,7 @@ module github.com/amanitaverna/frostutil
 go 1.19
 
 require (
-	github.com/amanitaverna/frosttest v1.0.0
-	github.com/hajimehoshi/ebiten/v2 v2.4.9
+	github.com/hajimehoshi/ebiten/v2 v2.4.10
 	github.com/stretchr/testify v1.8.1
 )
 

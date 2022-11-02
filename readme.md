@@ -1,4 +1,4 @@
-This package contains a number of utility functions related to math, strings, functional things (map, compose, partial application), colors, and images (*ebiten.Image, *image.NRGBA, and *image.RGBA):
+This package contains a number of utility functions related to math, strings, functional things (map, compose, partial application), colors, and images (*ebiten.Image, *image.NRGBA, and *image.RGBA), as well as a framework to enable running tests under Ebitengine:
 
 In util.go:
 - Min and Max functions for all signed or unsigned integers and floats, using generics.
@@ -28,3 +28,40 @@ In image.go:
 - CopyImage, which quickly and efficiently copies an image's pixel data to a new image of the same type (*ebiten.Image, *image.NRGBA, or *image.RGBA) and returns the copy. If given any other type of image, it creates a new *image.RGBA and copies the pixel data into it very slowly using At and Set.
 - CopyImageLines copies image data line by line. It is slower than copying the entire pixel data buffer at once, but useful if the source and destination images have different strides (because of padding, for instance). As far as I know, this shouldn't come up with images loaded from PNGs, but it might with other image formats.
 - SlowImageCopy copies pixel data from iImg to oImg pixel by pixel using (Image).At and (Image).Set. It's called by CopyImage or NewEImageFromImage if iImg isn't an *ebiten.Image, *image.NRGBA, or *image.RGBA. Since image.Image doesn't have a Set method, oImg must still be one of those three for this to work. If it isn't one of those, it returns an error.
+
+In matchesImage.go:
+- MatchesImage, which takes a *testing.T, an image name, and an image, and compares the image to the expected output (which should be a .png file in testdata/expected). If it fails to match, or the expected image is missing, it reports a failure to the *testing.T, attempts to write the failed image to testdata/failed (creating the folder if it doesn't exist), and returns false. If it matches, it returns true. It accepts both regular images and *ebiten.Images. If you just didn't have an expected image yet and it is correct, you can move the output image from testdata/failed to testdata/expected and the next run should pass, assuming the output is the same every time.
+
+Finally, test.go contains the code that enables testing things under Ebitengine in the Layout, Update, and Draw methods. To use this, every package that needs to test things under Ebitengine first needs a single file whose name should start with "test" which contains this function:
+```go
+func TestMain(m *testing.M) {
+	frostutil.OnTestMain(m)
+}
+```
+I personally keep this in main_test.go. You can see one in this package, since image_test.go includes tests that run under Ebitengine.
+
+OnTestMain ensures that every test run in the package under Ebitengine runs in the main/OS thread. It sets up and runs Ebitengine, runs your test functions (via m.Run) (which should call QueueLayoutTest, QueueUpdateTest, and/or QueueDrawTest if they need to run test code under Layout, Update, or Draw), waits for m.Run and all the tests to finish, and then prompts Update to tell Ebitengine to shut down.
+
+And then for the test files you have where you want to test things under Ebitengine, you can write tests like so (note that you don't have to queue them all from one test function, this is just to show all three Queue functions):
+```go
+func Test_SomeTests(t *testing.T) {
+	frostutil.QueueLayoutTest(t, test_SomeLayoutTest)
+	frostutil.QueueUpdateTest(t, test_SomeUpdateTest)
+	frostutil.QueueDrawTest(t, test_SomeDrawTest)	
+}
+
+func test_SomeLayoutTest(t *testing.T, outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
+	// Your actual test here. Also return screen dimensions for the Layout function to return:
+	return outsideWidth, outsideHeight // you can return something else if you like
+}
+
+func test_SomeUpdateTest(t *testing.T) {
+	// Your actual test here
+}
+
+func test_SomeDrawTest(t *testing.T, screen *ebiten.Image) {
+	// Your actual test here
+}
+```
+
+You can have multiple tests per file, of course, and they can each queue as many things as they want.

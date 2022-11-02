@@ -6,7 +6,6 @@ import (
 	"image"
 	"testing"
 
-	"github.com/amanitaverna/frosttest"
 	"github.com/amanitaverna/frostutil"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/stretchr/testify/assert"
@@ -155,7 +154,7 @@ func checkImagePatternImpl(pixelData []byte, rowBytes, stride int, alphaTestMode
 
 // Tests NewEImageFromImage and NewImageFromEImage
 func Test_ImageConversion(t *testing.T) {
-	frosttest.QueueUpdateTest(t, test_ImageConversion)
+	frostutil.QueueUpdateTest(t, test_ImageConversion)
 }
 
 func test_ImageConversion(t *testing.T) {
@@ -204,7 +203,7 @@ func test_ImageConversionImpl(ass *assert.Assertions, img image.Image, alphaTest
 
 // Tests CopyImage. We want to verify that it correctly copies *ebiten.Image, *image.NRGBA, and *image.RGBA images.
 func Test_CopyImage(t *testing.T) {
-	frosttest.QueueUpdateTest(t, test_CopyImage)
+	frostutil.QueueUpdateTest(t, test_CopyImage)
 }
 
 // Tests CopyImage. We want to verify that it correctly copies *ebiten.Image, *image.NRGBA, and *image.RGBA images.
@@ -276,7 +275,7 @@ func Test_CopyImageLines(t *testing.T) {
 
 // Test SlowImageCopy
 func Test_SlowImageCopy(t *testing.T) {
-	frosttest.QueueUpdateTest(t, test_SlowImageCopy)
+	frostutil.QueueUpdateTest(t, test_SlowImageCopy)
 }
 
 // Tests SlowImageCopy. We want to verify that it correctly copies *ebiten.Image, *image.NRGBA, and *image.RGBA images.
