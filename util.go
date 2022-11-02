@@ -14,7 +14,7 @@ func Min[T uint | int | uint8 | uint16 | uint32 | uint64 | int8 | int16 | int32 
 	}
 }
 
-// Min returns whichever of x or y is highest.
+// Max returns whichever of x or y is highest.
 func Max[T uint | int | uint8 | uint16 | uint32 | uint64 | int8 | int16 | int32 | int64 | float32 | float64](x, y T) T {
 	if x > y {
 		return x
