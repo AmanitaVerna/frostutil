@@ -75,6 +75,14 @@ func Test_RadiansToDegrees(t *testing.T) {
 	}
 }
 
+func Test_CenterString(t *testing.T) {
+	tas := assert.New(t)
+	tas.Equal("   123   ", CenterString("123", 9))
+	tas.Equal("   123    ", CenterString("123", 10))
+	tas.Equal("123 ", CenterString("123", 4))
+	tas.Equal("123", CenterString("123", 2))
+}
+
 func Test_Compose(t *testing.T) {
 	tas := assert.New(t)
 	testA := []int{1, 2, 3, 4, 5}

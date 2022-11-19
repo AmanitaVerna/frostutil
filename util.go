@@ -223,6 +223,36 @@ func RadiansToDegrees(rad float64) (deg float64) {
 	return (rad * 180.0) / math.Pi
 }
 
+// CenterString horizontally centers a string by padding it with spaces, if its length is less than desiredLen.
+// If len(str) < desiredLen, the returned string will have a length of desiredLen, and either have an equal number of spaces on both sides,
+// or one additional space on the right side.
+// If len(str) >= desiredLen, then str will be returned and no padding will have been added.
+func CenterString(str string, desiredLen int) (ret string) {
+	ret = str
+	diff := desiredLen - len(str)
+	if diff > 0 { // that is, if len(str) < desiredLen {
+		sb := strings.Builder{}
+		sb.Grow(desiredLen)
+		padAmt := diff >> 1 // pad each side by half of diff, rounded down
+		// pad the left side
+		for i := 0; i < padAmt; i++ {
+			sb.WriteRune(' ')
+		}
+		// add the string
+		sb.WriteString(str)
+		// pad the right side
+		for i := 0; i < padAmt; i++ {
+			sb.WriteRune(' ')
+		}
+		// if diff is odd, we need to add an odd number of spaces, and so we add an additional space on the end.
+		if diff&1 == 1 {
+			sb.WriteRune(' ')
+		}
+		ret = sb.String()
+	}
+	return
+}
+
 // Compose takes two functions f and g with a single parameter and return value of the same type, and returns a function that
 // returns f(g(t)), where t is a parameter of that shared type.
 func Compose[T any](f func(T) T, g func(T) T) func(T) T {
