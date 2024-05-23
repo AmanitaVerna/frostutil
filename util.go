@@ -3,6 +3,7 @@ package frostutil
 import (
 	"math"
 	"strings"
+	"unicode"
 )
 
 // Min returns whichever of x or y is lowest.
@@ -292,5 +293,15 @@ func Map[T, S any](f func(T) S, xs []T) (ys []S) {
 func Partial2to1[T, S, R any](f func(T, R) S, r R) func(T) S {
 	return func(t T) S {
 		return f(t, r)
+	}
+}
+
+// SafeRuneForFilenames is intended for use with the strings.Map function.
+// It strips all symbols except -._
+func SafeRuneForFilenames(r rune) rune {
+	if unicode.IsSymbol(r) && !(r == '-' || r == '.' || r == '_') {
+		return -1
+	} else {
+		return r
 	}
 }
